@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Yogurt Griego & Queso</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-light">
+
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-greek sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-jar fs-3"></i> Lácteos Artesanales
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative cursor-pointer" onclick="toggleCartDrawer(true)">
+                    <i class="fa-solid fa-cart-shopping fs-4 text-white"></i>
+                    <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Search Section -->
+    <section class="py-5 bg-white border-bottom text-center">
+        <div class="container">
+            <h1 class="fw-bold text-dark mb-2">Productos de Yogurt Griego y Quesos</h1>
+            <p class="text-muted">Frescura y sabor artesanal con el mejor nivel de proteína</p>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0 shadow-none" placeholder="Buscar producto o categoría...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Products Grid -->
+    <main class="container py-5">
+        <div id="gridProductos" class="row g-4">
+            <!-- Renderizado dinámico desde JS -->
+        </div>
+    </main>
+
+    <!-- Verifier Section (Subir Comprobante) -->
+    <section id="verifier-section" class="py-5 bg-white border-top">
+        <div class="container text-center max-w-600">
+            <h3 class="fw-bold text-dark mb-3"><i class="fa-solid fa-receipt me-2 text-greek"></i> Verificación Visual de Pago</h3>
+            <p class="text-muted small mb-4">Sube la captura de pantalla de tu transferencia QR para validar la compra visualmente.</p>
+            
+            <div class="dropzone-box p-4 border border-2 border-dashed rounded-4 bg-light position-relative mb-3">
+                <input type="file" id="receiptInput" accept="image/*" onchange="previewReceiptImage(event)" class="file-input-overlay">
+                <div id="dropzonePrompt" class="py-3">
+                    <i class="fa-solid fa-cloud-arrow-up fs-1 text-greek mb-2"></i>
+                    <p class="mb-1 fw-semibold text-dark">Haz clic o arrastra tu comprobante aquí</p>
+                    <span class="text-muted small">Formatos permitidos: JPG, PNG</span>
+                </div>
+                <img id="imagePreview" src="" alt="Vista previa del comprobante" class="img-fluid rounded-3 d-none max-h-250 mx-auto">
+            </div>
+
+            <button id="btnVerifyAI" class="btn btn-greek rounded-pill px-4 fw-bold mb-4" onclick="analyzeReceiptWithAI()" disabled>
+                <i class="fa-solid fa-eye me-2"></i> Verificar Comprobante
+            </button>
+
+            <!-- Loading Spinner -->
+            <div id="aiLoading" class="d-none py-3">
+                <div class="spinner-border text-greek mb-2" role="status"></div>
+                <p class="small text-muted mb-0">Analizando datos del comprobante...</p>
+            </div>
+
+            <!-- Result Card -->
+            <div id="aiResultCard" class="d-none mb-3"></div>
+
+            <!-- Activation / Success Banner -->
+            <div id="activationBanner" class="alert alert-success rounded-4 d-none mb-0">
+                <i class="fa-solid fa-circle-check fs-4 me-2"></i>
+                <strong>¡Pago Confirmado!</strong> Su pedido ha sido procesado exitosamente.
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Drawer Offcanvas -->
+    <div id="cartDrawerOverlay" class="cart-overlay d-none" onclick="toggleCartDrawer(false)"></div>
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-greek text-white">
+            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-basket-shopping me-2"></i> Mi Carrito</h5>
+            <button class="btn-close btn-close-white" onclick="toggleCartDrawer(false)"></button>
+        </div>
+        <div id="cartItemsContainer" class="p-3 flex-grow-1 overflow-auto">
+            <!-- Items del carrito -->
+        </div>
+        <div class="p-3 border-top bg-white">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Subtotal:</span>
+                <span id="cartSubtotal" class="fw-bold">Bs. 0.00</span>
+            </div>
+            <div class="d-flex justify-content-between fs-5 fw-bold mb-3">
+                <span>Total:</span>
+                <span id="cartTotal" class="text-greek">Bs. 0.00</span>
+            </div>
+            <button id="btnCheckout" class="btn btn-warning w-100 rounded-pill fw-bold py-2" onclick="openCheckoutModal()" disabled>
+                Proceder al Pago <i class="fa-solid fa-arrow-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Checkout QR -->
+    <div class="modal fade" id="modalCheckout" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Pago mediante Código QR</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <p class="text-muted small mb-2">Escanea el siguiente código QR desde tu app bancaria para realizar el pago por el monto total de:</p>
+                    <h2 id="checkoutTotalDisplay" class="fw-bold text-greek mb-3">Bs. 0.00</h2>
+                    <p class="badge bg-light text-dark border mb-3">Orden #<span id="checkoutOrderId">0000</span></p>
+
+                    <!-- IMAGEN DE QR ESTÁTICA -->
+                    <div class="p-3 bg-white border rounded-4 d-inline-block shadow-sm mb-3">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=Pago%20de%20Productos%20Yogurt%20y%20Queso" alt="Código QR de Pago" class="img-fluid rounded" style="max-width: 220px;">
+                    </div>
+
+                    <p class="small text-muted mb-3">Una vez realizado el pago, envía tu comprobante vía WhatsApp o súbelo al verificador.</p>
+
+                    <div class="d-flex flex-column gap-2">
+                        <a id="btnWhatsAppOrder" href="#" target="_blank" class="btn btn-success rounded-pill fw-bold">
+                            <i class="fa-brands fa-whatsapp me-2"></i> Enviar Comprobante por WhatsApp
+                        </a>
+                        <button class="btn btn-outline-greek rounded-pill fw-bold" onclick="closeCheckoutModalAndGoToVerifier()">
+                            <i class="fa-solid fa-upload me-2"></i> Subir Comprobante para Verificación
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+/* Estilos Personalizados */
+
+:root {
+    --greek-blue: #0056b3;
+    --greek-blue-hover: #004085;
+}
+
+.bg-greek {
+    background-color: var(--greek-blue) !important;
+}
+
+.text-greek {
+    color: var(--greek-blue) !important;
+}
+
+.btn-greek {
+    background-color: var(--greek-blue);
+    color: white;
+}
+
+.btn-greek:hover {
+    background-color: var(--greek-blue-hover);
+    color: white;
+}
+
+.btn-outline-greek {
+    border-color: var(--greek-blue);
+    color: var(--greek-blue);
+}
+
+.btn-outline-greek:hover {
+    background-color: var(--greek-blue);
+    color: white;
+}
+
+/* Tarjetas de Producto */
+.product-card {
+    transition: transform 0.2s ease, shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.product-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Carrito Drawer Lateral */
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 100%;
+    max-width: 380px;
+    height: 100vh;
+    background: #fff;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+}
+
+.cart-drawer.open {
+    right: 0;
+}
+
+/* Dropzone de Verificación */
+.dropzone-box {
+    position: relative;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: border-color 0.2s;
+}
+
+.dropzone-box:hover {
+    border-color: var(--greek-blue) !important;
+}
+
+.file-input-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.max-w-600 {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.max-h-250 {
+    max-height: 250px;
+    object-fit: contain;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
